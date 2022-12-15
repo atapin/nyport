@@ -23,7 +23,7 @@ const metaJson = (score) => {
 }
 
 const uploadMetaUrl = "https://api.nftport.xyz/v0/metadata"
-
+const auth = { headers: { 'Authorization': 'process.env.NFTPORT_KEY' } }
 
 export default function handler(req, res) {
   if (req.method === 'POST') {
@@ -34,7 +34,7 @@ export default function handler(req, res) {
       let points = Math.round(answer['point']['tp'] * 3600 / answer['completeSecond'])
       let meta = metaJson(points)
 
-      axios.post(uploadMetaUrl, meta).then(res => {
+      axios.post(uploadMetaUrl, meta, auth).then(res => {
         let ipfs = res.data['metadata_uri']
 
         axios.post("https://api.nftport.xyz/v0/mints/customizable", {
@@ -42,7 +42,7 @@ export default function handler(req, res) {
           metadata_uri: ipfs,
           contract_address: "0x6ebd10ab3b39d8e2ce52f253b56b758aa830365b",
           mint_to_address: "0xfE011b3a7d2E394D1207e68b25f4012C0012044C"
-        }).then(res => {
+        }, auth).then(res => {
           console.log("Mint:", res.data);
 
         })
