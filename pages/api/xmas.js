@@ -35,8 +35,9 @@ export default function handler(req, res) {
       let meta = metaJson(points)
 
       axios.post(uploadMetaUrl, meta, auth).then(res => {
-        let ipfs = res.data['metadata_uri']
-
+        res.data['metadata_uri']
+      }).then(ipfs => {
+        console.log("Minting with ipfs:", ipfs);
         axios.post("https://api.nftport.xyz/v0/mints/customizable", {
           chain: "goerli",
           metadata_uri: ipfs,
@@ -46,6 +47,8 @@ export default function handler(req, res) {
           console.log("Mint:", res.data);
 
         })
+      }).catch(err => {
+        console.log("Error:", err);
       })
 
 
